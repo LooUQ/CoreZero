@@ -6,6 +6,8 @@
 *
 *	Copyright (c) 2019 LooUQ Incorporated.
 *
+*	License: The GNU License
+*
 *	This file is part of CoreZero.
 *
 *   CoreZero is free software: you can redistribute it and/or modify
