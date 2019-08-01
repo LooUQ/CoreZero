@@ -4,7 +4,7 @@
 
 # Target Platforms
 - [ ] AtmelSAM
-  + [X] Arduino
+- [X] Arduino
 - [X] Windows IoT
   + 10.0.17763.0
 - [ ] Rasbian
