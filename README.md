@@ -2,8 +2,8 @@
 Cross-Platform core software library.
 
 # Target Platforms
-- AtmelSAM
-  + Arduino
-- Windows IoT
+- [ ] AtmelSAM
+  + [X] Arduino
+- [X] Windows IoT
   + 10.0.17763.0
-- Rasbian
+- [ ] Rasbian
