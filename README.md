@@ -1,4 +1,4 @@
-# LooUQ | IoT-Core
+![corezero](https://drive.google.com/uc?id=118pAlx0MFNZUSN_hTOjFabAlGa8wRKSy)
 
 ----
 
