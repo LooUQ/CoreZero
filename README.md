@@ -1,4 +1,4 @@
-![CoreZero_THUMBNAIL](https://usermediauploads.s3.us-west-2.amazonaws.com/user_6009193/My_Images/64e7dcb1-e4d5-4e34-9cb0-52e83a745bea.png)
+![CoreZero_THUMBNAIL](https://drive.google.com/open?id=118pAlx0MFNZUSN_hTOjFabAlGa8wRKSy)
 
 ## Cross-Platform core software library.
 
