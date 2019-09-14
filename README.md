@@ -4,16 +4,14 @@
 
 ## Core Library
 
-The LooUQ IoT Core library provides a framework that allows rapid development of cross-platform solutions. The library is object-oriented and reactive, providing the
-developer with powerful tools. The library is written in C++11 without using the STL (due to the lack of support on the Arduino Platform). The library primarily relies
-on the C99 library, maintaining portability. Fundamental templated object are implemented in this library, compiling on both Arduino and Windows alike.
+The LooUQ's CoreZero SDK provides a framework that allows rapid development of cross-platform solutions. The library is object-oriented and reactive, providing the developer with powerful tools. The library is written with C++11 language standards, without using the STL (due to the lack of support on Arduino and other MCU platforms). The library primarily relies on the C99 library, maintaining portability in the aspect of dependencies. Fundamental templated objects are implemented in this library, compiling on both Arduino and Windows alike.
 
 ## Getting Started
 
-1. Download [this](https://github.com/LooUQ/LooUQ-IoT-Core) source code
+1. Download [this](https://github.com/LooUQ/CoreZero-SDK) source code
 2. Pick a platform
-  * [Windows](https://github.com/LooUQ/LooUQ-Platform-WinIoT)
-  * [Arduino](https://github.com/LooUQ/LooUQ-Platform-Arduino)
+  * [Windows](https://github.com/LooUQ/CoreZero-PDK)
+  * [Arduino](https://github.com/LooUQ/CoreZero-PDK)
   * [Custom](https://github.com/loouq)
 3. Start coding!
 
