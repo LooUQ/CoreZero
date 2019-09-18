@@ -1,6 +1,6 @@
-//	Copyright (c) 2019 LooUQ Incorporated
+//	Copyright (c) 2019 LooUQ Incorporated.
 
-//	Licensed under GNU GPLv3.
+//	Licensed under the GNU GPLv3. See LICENSE file in the project root for full license information.
 #include "CoreZero.Network.hpp"
 
 #include <string.h>
