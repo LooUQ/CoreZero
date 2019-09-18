@@ -3,6 +3,9 @@
 //	Licensed under the GNU GPLv3. See LICENSE file in the project root for full license information.
 #include "CoreZero.Utility.AT_Protocol.hpp"
 
+#include <stdarg.h>
+#include <ctype.h>
+
 #define LF	'\n'
 #define CR	'\r'
 
@@ -19,15 +22,10 @@ namespace CoreZero
 		{
 			//	Delete buffer.
 			delete[] m_buffer;
-			delete m_bg96;
-			delete &CSerialController::GetDefaultController();
 		}
 
 		void AT_Protocol<false>::Initialize()
 		{
-			m_bg96 = CSerialController::GetDefaultController().OpenPort(PortName, 115200);
-			m_bg96->ReceivedData += CoreZero::Create_MemberDelegate(this, &AT_Protocol<false>::dispatch_incoming);
-
 			m_buffer = new char[AT_MaxCommandLen];
 			strncpy(m_buffer, AT_Header, sizeof(AT_Header));
 			m_bufSize = 2;
@@ -90,8 +88,8 @@ namespace CoreZero
 		}
 
 		void AT_Protocol<false>::poll()
-		{
-			m_bg96->GetAvailable();
+		{			
+			// device->get_available
 		}
 
 		/**********************************************************************
@@ -99,8 +97,8 @@ namespace CoreZero
 		 */
 		void AT_Protocol<false>::send_command()
 		{
-			m_buffer[m_bufSize++] = CR;
-			m_bg96->Write(m_buffer, m_bufSize);
+			m_buffer[m_bufSize++] = CR;			
+			// \ToDo: device->write(m_buffer, m_bufSize);
 			m_buffer[sizeof(AT_Header) - 1] = NULL;
 			m_bufSize = sizeof(AT_Header) - 1;
 		}
@@ -114,7 +112,7 @@ namespace CoreZero
 		{
 			while (m_awaitingResponse)
 			{
-				m_bg96->GetAvailable();
+				poll();
 			}
 		}
 

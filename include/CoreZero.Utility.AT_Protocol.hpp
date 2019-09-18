@@ -33,8 +33,6 @@
 #include "CoreZero.Async.h"
 #include "CoreZero.CompileTime.ConditionalTyping.hpp"
 
-#include "SerialController.hpp"
-
 constexpr const wchar_t PortName[] = L"\\\\.\\COM10";
 
 #define AT_OK	(0)
@@ -48,14 +46,7 @@ namespace CoreZero
 			//: base_thread_coordinator
 		{
 		public:
-			constexpr AT_Protocol()
-				: m_bg96(nullptr)
-				, m_buffer(nullptr)
-				, m_bufSize(0)
-				, m_responseLocation(nullptr)
-				, m_recentResult(-1)
-				, m_awaitingResponse(false)
-			{}
+			constexpr AT_Protocol() {}
 
 			~AT_Protocol();
 
@@ -78,22 +69,19 @@ namespace CoreZero
 
 		private:
 			/// Buffer for command construction.
-			char* m_buffer;
+			char* m_buffer = nullptr;
 
 			/// Size of command buffer.
-			size_t m_bufSize;
+			size_t m_bufSize = 0;
 
 			/// Where to put the response.
-			char* const* m_responseLocation;
+			char* const* m_responseLocation = nullptr;
 
 			/// Whether the protocol is awaiting an immediate response.
-			bool m_awaitingResponse;
+			bool m_awaitingResponse = false;
 
 			///	The most recent result code.
-			int m_recentResult;
-
-			/// The serial device.
-			CSerialDevice* m_bg96;
+			int m_recentResult = 0;
 		};
 
 		template<typename ...RESULTS>

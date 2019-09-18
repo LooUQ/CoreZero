@@ -74,8 +74,7 @@ namespace CoreZero
 		
 		/// Subscribe operator to attach an object's member function as an
 		///		event handler.
-		template <class T>
-		void operator +=(Delegate<RETTy_(T::*)(ARGS...)> * evHandler)
+		void operator +=(EventHandler * evHandler)
 		{
 			delete p_eventHandler;
 			p_eventHandler = evHandler;

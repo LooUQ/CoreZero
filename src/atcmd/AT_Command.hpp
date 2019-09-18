@@ -29,7 +29,7 @@
 
 #include "AT_Def.hpp"
 
-#include "../CoreZero.String.hpp"
+#include "CoreZero.String.hpp"
 
 #include <stdio.h>
 #include <string.h>

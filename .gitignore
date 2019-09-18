@@ -8,16 +8,15 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.tlog
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+*.ini
 
 # Build results
-[Dd]ebug/
 [Dd]ebugPublic/
-[Rr]elease/
 [Rr]eleases/
-x64/
 x86/
 bld/
 [Bb]in/
@@ -334,3 +333,7 @@ ASALocalRun/
 *.filters
 /iotQc.Core.StaticLib
 /UT.iotQc.Core
+/build/Debug
+/build/Release/build.tlog
+/build/x64
+/tests/x64/Debug
