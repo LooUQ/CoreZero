@@ -165,6 +165,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Delegate_tests.cpp" />
+    <ClCompile Include="Event_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\build\build.vcxproj">
