@@ -31,10 +31,17 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "CoreZero.Delegate.hpp"
 #include "CoreZero.Memory.RingBuffer.hpp"
 
 namespace CoreZero
 {
+	template <typename T>
+	using WriteMethod = Delegate<unsigned(const T[], unsigned)>;
+
+	template <typename T>
+	using ReadMethod = Delegate<unsigned(T[], unsigned)>;
+
 	namespace Streams
 	{
 		/**********************************************************************

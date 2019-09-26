@@ -15,6 +15,11 @@ namespace CoreZero
 {
 	namespace Utility
 	{
+		AT_Protocol<false>::AT_Protocol(WriteMethod<char>* write_fn, ReadMethod<char>* read_fn)
+		{
+		}
+
+
 		/**********************************************************************
 		 *	\brief Destructor.
 		 */

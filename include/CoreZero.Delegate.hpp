@@ -192,6 +192,12 @@ namespace CoreZero
 	{
 		return new Delegate<RETTy_(OBJECTTy_::*)(ARGS...)const>{ objectInstance, memberFunction };
 	}
+
+	template <class LAMBDATy_>
+	inline auto Lambda_to_Delegate(const LAMBDATy_& lambdaInstance) -> Delegate<decltype(&LAMBDATy_::operator())>*
+	{
+		return Create_MemberDelegate(lambdaInstance, &LAMBDATy_::operator());
+	}
 }
 
 #endif // !COREZERO_DELEGATE_H

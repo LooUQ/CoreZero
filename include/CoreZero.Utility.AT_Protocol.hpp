@@ -27,13 +27,12 @@
 #ifndef COREZERO_UTILITY_ATPROTOCOL_H_
 #define COREZERO_UTILITY_ATPROTOCOL_H_
 
-#include "atcmd/AT_Def.hpp"
-#include "atcmd/AT_Command.hpp"
+#include "../src/atcmd/AT_Def.hpp"
+#include "../src/atcmd/AT_Command.hpp"
 
+#include "CoreZero.Streams.h"
 #include "CoreZero.Async.h"
 #include "CoreZero.CompileTime.ConditionalTyping.hpp"
-
-constexpr const wchar_t PortName[] = L"\\\\.\\COM10";
 
 #define AT_OK	(0)
 
@@ -42,12 +41,11 @@ namespace CoreZero
 	namespace Utility
 	{
 		template<>
-		class AT_Protocol<false> final
-			//: base_thread_coordinator
+		class AT_Protocol<false> final			
 		{
-		public:
-			constexpr AT_Protocol() {}
-
+		public:			
+			AT_Protocol(WriteMethod<char>* const write_fn, ReadMethod<char>* const read_fn);
+			AT_Protocol(decltype(nullptr)) {}
 			~AT_Protocol();
 
 			void Initialize();
@@ -67,6 +65,9 @@ namespace CoreZero
 			void process_out_of_band_data(const char* inData);
 
 
+		//
+		//	Attributes
+		//
 		private:
 			/// Buffer for command construction.
 			char* m_buffer = nullptr;
@@ -98,8 +99,6 @@ namespace CoreZero
 
 			return result;
 		}
-
-
 
 
 		/*
