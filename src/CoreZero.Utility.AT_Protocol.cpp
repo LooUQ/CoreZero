@@ -1,13 +1,21 @@
 //	Copyright (c) 2019 LooUQ Incorporated.
 
 //	Licensed under the GNU GPLv3. See LICENSE file in the project root for full license information.
-#include "CoreZero.Utility.AT_Protocol.hpp"
 
+#include "CoreZero.Utility.AT_Protocol.hpp"
 #include <stdarg.h>
 #include <ctype.h>
+#include "..\include\CoreZero.Utility.AT_Protocol.hpp"
+
+
+/*--------------------.
+ | Control Characters |
+ `--------------------*/
 
 #define LF	'\n'
 #define CR	'\r'
+
+
 
 
 
@@ -15,9 +23,11 @@ namespace CoreZero
 {
 	namespace Utility
 	{
-		AT_Protocol<false>::AT_Protocol(WriteMethod<char>* write_fn, ReadMethod<char>* read_fn)
-		{
-		}
+
+		AT_Protocol<false>::AT_Protocol(Memory::I_Buffer<char>* inputBuffer, CZSystem::Communication::I_Communicator* atCom)
+			: m_pComBuffer(inputBuffer)
+		{}
+
 
 
 		/**********************************************************************
@@ -29,6 +39,11 @@ namespace CoreZero
 			delete[] m_buffer;
 		}
 
+
+
+		/**********************************************************************
+		 *	\brief Initialize the protocol.
+		 */
 		void AT_Protocol<false>::Initialize()
 		{
 			m_buffer = new char[AT_MaxCommandLen];
@@ -92,10 +107,7 @@ namespace CoreZero
 			return result;
 		}
 
-		void AT_Protocol<false>::poll()
-		{			
-			// device->get_available
-		}
+
 
 		/**********************************************************************
 		 *	\brief Send the buffer holding the command.
@@ -117,7 +129,7 @@ namespace CoreZero
 		{
 			while (m_awaitingResponse)
 			{
-				poll();
+				//poll();
 			}
 		}
 

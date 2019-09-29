@@ -29,8 +29,9 @@ namespace CoreZero
 
 		unsigned read(char _in[], unsigned size)
 		{
-			std::string
-			m_serialDevice.Read()
+			std::string in_str;
+			m_serialDevice.Read(in_str);
+			strcpy(_in, in_str.c_str());
 			return 0U;
 		}
 

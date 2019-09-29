@@ -28,7 +28,7 @@
 
 #include <stdint.h>
 
-#include "CZSystem.Network.hpp"
+#include "CZSystem.Network.h"
 #include "CoreZero.Memory.RingBuffer.hpp"
 
 namespace CoreZero

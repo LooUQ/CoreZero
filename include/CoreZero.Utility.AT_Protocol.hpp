@@ -29,9 +29,9 @@
 
 #include "../src/atcmd/AT_Def.hpp"
 #include "../src/atcmd/AT_Command.hpp"
-
-#include "CoreZero.Streams.h"
+#include <CZSystem.Communication.h>
 #include "CoreZero.Async.h"
+#include "CoreZero.Memory.hpp"
 #include "CoreZero.CompileTime.ConditionalTyping.hpp"
 
 #define AT_OK	(0)
@@ -40,23 +40,32 @@ namespace CoreZero
 {
 	namespace Utility
 	{
+		/**********************************************************************
+		 *	AT_Protocol operating with numeric results.
+		 */
 		template<>
-		class AT_Protocol<false> final			
+		class AT_Protocol<false> final
 		{
-		public:			
-			AT_Protocol(WriteMethod<char>* const write_fn, ReadMethod<char>* const read_fn);
+		//
+		//	Constructors.
+		//
+		public:		
 			AT_Protocol(decltype(nullptr)) {}
+			AT_Protocol(Memory::I_Buffer<char>* inputBuffer, CZSystem::Communication::I_Communicator* atCom);
+
 			~AT_Protocol();
 
+
+		//
+		//	Methods
+		//
+		public:
 			void Initialize();
 
 			template <typename ... RESULTS>
 			int SendCommand(const AT_Command<RESULTS...>& commandDefinition);
-
 			int SendCommand(const char cmd[]);
-			int SendCommandF(const char format[], ...);
-
-			void poll();
+			int SendCommandF(const char format[], ...);			
 
 		private:
 			void send_command();
@@ -69,6 +78,9 @@ namespace CoreZero
 		//	Attributes
 		//
 		private:
+			/// Pointer to buffer receiving responses.
+			Memory::I_Buffer<char>* const m_pComBuffer = nullptr;
+
 			/// Buffer for command construction.
 			char* m_buffer = nullptr;
 
@@ -85,6 +97,8 @@ namespace CoreZero
 			int m_recentResult = 0;
 		};
 
+
+
 		template<typename ...RESULTS>
 		inline int AT_Protocol<false>::SendCommand(const AT_Command<RESULTS...>& commandDefinition)
 		{
@@ -99,6 +113,7 @@ namespace CoreZero
 
 			return result;
 		}
+
 
 
 		/*
