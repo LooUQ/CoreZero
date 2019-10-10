@@ -35,8 +35,6 @@
 #include "CoreZero.Async.h"
 #include "CoreZero.CompileTime.ConditionalTyping.hpp"
 
-#define AT_OK	(0)
-
 namespace CoreZero
 {
 	namespace Utility
