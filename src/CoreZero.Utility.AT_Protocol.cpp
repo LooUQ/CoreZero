@@ -15,10 +15,6 @@
 #define LF	'\n'
 #define CR	'\r'
 
-
-
-
-
 namespace CoreZero
 {
 	namespace Utility
