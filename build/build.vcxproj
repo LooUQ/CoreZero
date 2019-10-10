@@ -47,10 +47,11 @@
     <ClInclude Include="..\include\CoreZero.String.hpp" />
     <ClInclude Include="..\include\CoreZero.Threading.Mutex.hpp" />
     <ClInclude Include="..\include\CoreZero.Utility.Array.hpp" />
-    <ClInclude Include="..\include\CoreZero.Utility.AT_Protocol.hpp" />
+    <ClInclude Include="..\include\CoreZero.Utility.AT_Protocol.h" />
     <ClInclude Include="..\include\CoreZero.Utility.hpp" />
     <ClInclude Include="..\include\CoreZero.Utility.Pair.hpp" />
     <ClInclude Include="..\include\CoreZero.Utility.Queue.hpp" />
+    <ClInclude Include="..\include\CoreZero.Utility.StringBuilder.h" />
     <ClInclude Include="..\include\CoreZero.Utility.Vector.hpp" />
     <ClInclude Include="..\src\atcmd\AT_Command.hpp" />
     <ClInclude Include="..\src\atcmd\AT_Def.hpp" />

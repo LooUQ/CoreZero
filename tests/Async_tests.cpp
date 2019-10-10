@@ -5,13 +5,15 @@
 #include <string>
 
 #include <CoreZero.Async.h>
+using namespace CoreZero;
+
 #include <thread>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace CoreZero
 {
-	void plus_5(CoreZero::Request<int>&& request)
+	void plus_5(Async::Request<int>&& request)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 		request.Fulfill(5);
@@ -22,8 +24,8 @@ namespace CoreZero
 	public:
 		TEST_METHOD(basic_with_copies)
 		{
-			CoreZero::Request<int> async_req;
-			CoreZero::Async<int> async_result = async_req.GetAsyncResult();
+			Async::Request<int> async_req;
+			Async::Result<int> async_result = async_req.GetAsyncResult();
 
 			std::thread th(plus_5, async_req);
 
@@ -35,8 +37,8 @@ namespace CoreZero
 
 		TEST_METHOD(chaining_with_copies)
 		{
-			CoreZero::Request<int> async_req;
-			CoreZero::Async<int> async_result = async_req.GetAsyncResult();
+			Async::Request<int> async_req;
+			Async::Result<int> async_result = async_req.GetAsyncResult();
 
 			async_result.Then([](int xplus5)
 				{
