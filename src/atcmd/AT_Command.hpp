@@ -30,6 +30,7 @@
 #include "AT_Def.hpp"
 
 #include "CoreZero.String.hpp"
+#include "CoreZero.Async.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -38,7 +39,7 @@ namespace CoreZero
 {
 	namespace Utility
 	{
-		template <bool VERBOSE>
+		template <bool VERBOSE = false>
 		class AT_Protocol;
 
 		template <typename ... RESULTS>
@@ -144,10 +145,10 @@ namespace CoreZero
 				return get_results(results...);
 			}
 
-			template <typename T, typename ... ARGS>
-			void GetAsync(const T& lambda)
+			template <typename LAMBDATy_>
+			void GetAsync(const LAMBDATy_& _callback)
 			{
-				
+				m_asyncCallback = Create_MemberDelegate(_callback, &LAMBDATy_::operator());
 			}
 
 			inline void parse_result(int& intResult)
@@ -200,7 +201,8 @@ namespace CoreZero
 #endif // _DEBUG
 
 
-
+		private:
+			CoreZero::Delegate<void(RESULTS...)>* m_asyncCallback = nullptr;
 
 		private:
 			const char* m_command;
