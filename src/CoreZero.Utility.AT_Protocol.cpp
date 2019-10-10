@@ -2,10 +2,10 @@
 
 //	Licensed under the GNU GPLv3. See LICENSE file in the project root for full license information.
 
-#include "CoreZero.Utility.AT_Protocol.hpp"
+#include "CoreZero.Utility.AT_Protocol.h"
+#include "atcmd/AT_Command.hpp"
 #include <stdarg.h>
 #include <ctype.h>
-#include "..\include\CoreZero.Utility.AT_Protocol.hpp"
 
 
 /*--------------------.
@@ -24,9 +24,11 @@ namespace CoreZero
 	namespace Utility
 	{
 
-		AT_Protocol<false>::AT_Protocol(Memory::I_Buffer<char>* inputBuffer, CZSystem::Communication::I_Communicator* atCom)
-			: m_pComBuffer(inputBuffer)
-		{}
+		AT_Protocol<false>::AT_Protocol(Delegate<size_t(const char*, size_t)>* writeCommandMethod)
+			: m_writeFn(writeCommandMethod)
+		{
+			m_commandBuilder = StringBuilder(AT_Header, AT_MaxCommandLen);
+		}
 
 
 
@@ -35,23 +37,22 @@ namespace CoreZero
 		 */
 		AT_Protocol<false>::~AT_Protocol()
 		{
-			//	Delete buffer.
-			delete[] m_buffer;
+
 		}
 
 
-
-		/**********************************************************************
-		 *	\brief Initialize the protocol.
-		 */
-		void AT_Protocol<false>::Initialize()
+		AT_Protocol<false>& AT_Protocol<false>::operator=(AT_Protocol&& otherProtocol) noexcept
 		{
-			m_buffer = new char[AT_MaxCommandLen];
-			strncpy(m_buffer, AT_Header, sizeof(AT_Header));
-			m_bufSize = 2;
+			m_writeFn = otherProtocol.m_writeFn;
+			otherProtocol.m_writeFn = nullptr;
 
+			m_commandBuilder = (StringBuilder&&)otherProtocol.m_commandBuilder;
+
+			//	On move execute runtime initializiation
 			SendCommand("E0");
 			SendCommand("V0");
+
+			return *this;
 		}
 
 
@@ -66,8 +67,7 @@ namespace CoreZero
 		{
 			int result = -1;
 
-			strcat(m_buffer, cmd);
-			m_bufSize += strlen(cmd);
+			m_commandBuilder.Append(cmd);
 
 			m_awaitingResponse = true;
 			send_command();
@@ -93,8 +93,8 @@ namespace CoreZero
 			int result = -1;
 
 			va_list cmd_args;
-			va_start(cmd_args, format);
-			m_bufSize += vsprintf(m_buffer + m_bufSize, format, cmd_args);
+			va_start(cmd_args, format);			
+			m_commandBuilder.AppendFormat(format, cmd_args);
 			va_end(cmd_args);
 
 			m_awaitingResponse = true;
@@ -109,15 +109,22 @@ namespace CoreZero
 
 
 
+		int AT_Protocol<false>::Parse(const char* responseData, size_t responseLen)
+		{
+			dispatch_incoming(responseData);
+			return 0;
+		}
+
+
+
 		/**********************************************************************
 		 *	\brief Send the buffer holding the command.
 		 */
 		void AT_Protocol<false>::send_command()
-		{
-			m_buffer[m_bufSize++] = CR;			
-			// \ToDo: device->write(m_buffer, m_bufSize);
-			m_buffer[sizeof(AT_Header) - 1] = NULL;
-			m_bufSize = sizeof(AT_Header) - 1;
+		{						
+			m_commandBuilder.Append(CR);
+			(*m_writeFn)(m_commandBuilder.AsCString(), m_commandBuilder.Length());			
+			m_commandBuilder.Reset(sizeof(AT_Header)-1);
 		}
 
 
@@ -128,9 +135,7 @@ namespace CoreZero
 		void AT_Protocol<false>::await_result()
 		{
 			while (m_awaitingResponse)
-			{
-				//poll();
-			}
+				;
 		}
 
 
