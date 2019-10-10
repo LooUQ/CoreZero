@@ -47,7 +47,7 @@ namespace CoreZero
 		 */
 		template<typename T = char, size_t N = 64U, typename container = T * >
 		class CircularBuffer
-			: public Memory::I_Buffer<T, N>
+			: public Memory::I_Buffer<T>
 		{
 			//
 			//	Constructors

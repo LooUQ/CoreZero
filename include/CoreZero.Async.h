@@ -59,6 +59,7 @@ namespace CoreZero
 		RESULTTy_ operator await (const Result<RESULTTy_>& asyncResult);
 
 
+
 		template<>
 		class Result<void>
 		{
