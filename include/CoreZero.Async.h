@@ -86,11 +86,11 @@ namespace CoreZero
 		class Result
 		{
 			friend Request<RESULTTy_>;
-			RESULTTy_ friend CoreZero::Async::operator await (const Result<RESULTTy_>&);
+			template <typename T> T friend CoreZero::Async::operator await (const Result<T>&);
 
-			//
-			//	Constructors & Assignments
-			//
+		//
+		//	Constructors & Assignments
+		//
 		private:
 			/* Constructor. */
 			Result(Request<RESULTTy_>* request)
@@ -121,9 +121,9 @@ namespace CoreZero
 			}
 
 
-			//
-			//	Methods
-			//
+		//
+		//	Methods
+		//
 		public:
 
 			template <typename LAMBDATy_>
@@ -151,9 +151,9 @@ namespace CoreZero
 			}
 
 
-			//
-			//	Attributes
-			//
+		//
+		//	Attributes
+		//
 		private:
 			/// Wether this object owns the dynamic pointers.
 			bool m_hasOwnership = false;

@@ -26,9 +26,10 @@
 #ifndef COREZERO_UTILITY_ATPROTOCOL_H_
 #define COREZERO_UTILITY_ATPROTOCOL_H_
 
-#include "../src/atcmd/AT_Def.hpp"
-#include "../src/atcmd/AT_Command.hpp"
 #include <CZSystem.Communication.h>
+
+#include "atcmd/AT_Def.hpp"
+#include "atcmd/AT_Command.hpp"
 #include "CoreZero.Memory.hpp"
 #include "CoreZero.Utility.StringBuilder.h"
 #include "CoreZero.Async.h"
@@ -94,7 +95,7 @@ namespace CoreZero
 			Memory::I_Buffer<char>* const m_pComBuffer = nullptr;
 
 			/// Buffer for command construction.
-			StringBuilder m_commandBuilder = nullptr;
+			StringBuilder m_commandBuilder = { nullptr };
 
 			/// Where to put the response.
 			char* const* m_responseLocation = nullptr;

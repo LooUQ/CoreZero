@@ -1,7 +1,8 @@
 /******************************************************************************
+*	String builder for string construction. i.e. commands.
+*
 *	\file	CoreZero.Utility.StringBuilder.h
 *	\author	Jensen Miller	<jensen@loouq.com>
-*	\details String builder for string construction. i.e. commands.
 *
 *	Copyright (c) 2019 LooUQ Incorporated.
 *
