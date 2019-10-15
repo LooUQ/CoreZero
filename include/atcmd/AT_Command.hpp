@@ -63,7 +63,7 @@ namespace CoreZero
 				{
 					//	Write Command			
 					m_buffer[m_bufferSize++] = AT_WriteOp;
-					m_buffer[m_bufferSize] = NULL;
+					m_buffer[m_bufferSize] = '\0';
 					build_command(cmdArguments...);
 				}
 			}

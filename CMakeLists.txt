@@ -19,6 +19,22 @@ project ("${PROJECT_NAME}")
 
 
 
+
+
+#
+#	Configure Directories
+#
+set	(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+#	filters
+set (EXTERNAL_DEPENDENCIES_FILTER "extern")
+set (UNIT_TESTS_FILTER "tests")
+
+
+
+
+
 #
 #	Build Options
 #
@@ -42,6 +58,12 @@ if (BUILD_EXAMPLES)
 	add_subdirectory("${PROJECT_SOURCE_DIR}/examples")
 endif()
 
+#	Tests
+if (BUILD_TESTS)
+	enable_testing()
+	add_subdirectory("${PROJECT_SOURCE_DIR}/tests")
+endif()
+
 
 
 #
@@ -55,6 +77,11 @@ file(GLOB_RECURSE LIB_INCLUDES FOLLOW_SYMLINKS "${PROJECT_SOURCE_DIR}/include/*.
 #
 #	Setup Library by root
 #
+if (MSVC)
+	set (CMAKE_CXX_FLAGS "/IGNORE:4996")
+endif()
+
+
 find_library(CoreZero-PDK
 	NAMES czsystem.lib
 	HINTS "${PROJECT_SOURCE_DIR}/../CoreZero-PDK"
@@ -62,6 +89,7 @@ find_library(CoreZero-PDK
 
 include_directories("${PROJECT_SOURCE_DIR}/../CoreZero-PDK/include")
 
+#	Build library as shared or static
 if (BUILD_LIBRARY_AS_SHARED)
 	add_library("${PROJECT_LIB_NAME}" SHARED "")
 	set_target_properties("${PROJECT_LIB_NAME}" PROPERTIES SUFFIX ".so")
@@ -70,7 +98,7 @@ else()
 	set_target_properties("${PROJECT_LIB_NAME}" PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
-
+#	Set include directories
 target_include_directories("${PROJECT_LIB_NAME}" PRIVATE "${PROJECT_SOURCE_DIR}/include")
 
 target_sources("${PROJECT_LIB_NAME}" PUBLIC "${LIB_INCLUDES}")	# include library headers

@@ -1,7 +1,7 @@
 //	Copyright (c) 2019 LooUQ Incorporated.
 
 //	Licensed under the GNU GPLv3. See LICENSE file in the project root for full license information.
-#include "CppUnitTest.h"
+#include <CppUnitTest.h>
 #include <string>
 
 #include <CoreZero.Async.h>
