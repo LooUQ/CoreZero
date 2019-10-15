@@ -98,4 +98,7 @@ namespace CoreZero
 		//	check the RETURN value of the subscriber method
 		Assert::AreEqual(12, accumulating_event(5, 7));
 	}
+
+
+	//	\TODO: Test Event with MemberDelegate
 }
