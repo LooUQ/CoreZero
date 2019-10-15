@@ -2,8 +2,8 @@
 
 //	Licensed under the GNU GPLv3. See LICENSE file in the project root for full license information.
 
-#include "CoreZero.Utility.AT_Protocol.h"
-#include "atcmd/AT_Command.hpp"
+#include "CoreZero.Utility.ATProtocol.hpp"
+#include "atcmd/ATCommand.hpp"
 #include <stdarg.h>
 #include <ctype.h>
 
@@ -20,7 +20,7 @@ namespace CoreZero
 	namespace Utility
 	{
 
-		AT_Protocol<false>::AT_Protocol(Delegate<size_t(const char*, size_t)>* writeCommandMethod)
+		ATProtocol<false>::ATProtocol(Delegate<size_t(const char*, size_t)>* writeCommandMethod)
 			: m_writeFn(writeCommandMethod)
 		{
 			m_commandBuilder = StringBuilder(AT_Header, AT_MaxCommandLen);
@@ -31,13 +31,13 @@ namespace CoreZero
 		/**********************************************************************
 		 *	\brief Destructor.
 		 */
-		AT_Protocol<false>::~AT_Protocol()
+		ATProtocol<false>::~ATProtocol()
 		{
 
 		}
 
 
-		AT_Protocol<false>& AT_Protocol<false>::operator=(AT_Protocol&& otherProtocol) noexcept
+		ATProtocol<false>& ATProtocol<false>::operator=(ATProtocol&& otherProtocol) noexcept
 		{
 			m_writeFn = otherProtocol.m_writeFn;
 			otherProtocol.m_writeFn = nullptr;
@@ -59,7 +59,7 @@ namespace CoreZero
 		 *	\param[in] cmd The AT command to send.
 		 *	\returns The command's result code.
 		 */
-		int AT_Protocol<false>::SendCommand(const char cmd[])
+		int ATProtocol<false>::SendCommand(const char cmd[])
 		{
 			int result = -1;
 
@@ -84,7 +84,7 @@ namespace CoreZero
 		 *	\param[in] ... The arguments.
 		 *	\returns The command's result code.
 		 */
-		int AT_Protocol<false>::SendCommandF(const char format[], ...)
+		int ATProtocol<false>::SendCommandF(const char format[], ...)
 		{
 			int result = -1;
 
@@ -105,7 +105,7 @@ namespace CoreZero
 
 
 
-		int AT_Protocol<false>::Parse(const char* responseData, size_t responseLen)
+		int ATProtocol<false>::Parse(const char* responseData, size_t responseLen)
 		{
 			dispatch_incoming(responseData);
 			return 0;
@@ -116,7 +116,7 @@ namespace CoreZero
 		/**********************************************************************
 		 *	\brief Send the buffer holding the command.
 		 */
-		void AT_Protocol<false>::send_command()
+		void ATProtocol<false>::send_command()
 		{						
 			m_commandBuilder.Append(CR);
 			(*m_writeFn)(m_commandBuilder.AsCString(), m_commandBuilder.Length());			
@@ -128,7 +128,7 @@ namespace CoreZero
 		/**********************************************************************
 		 *	\brief Await the response result.
 		 */
-		void AT_Protocol<false>::await_result()
+		void ATProtocol<false>::await_result()
 		{
 			while (m_awaitingResponse)
 				;
@@ -141,7 +141,7 @@ namespace CoreZero
 		 *
 		 *	\param[in] inData The incoming data.
 		 */
-		void AT_Protocol<false>::dispatch_incoming(const char* inData)
+		void ATProtocol<false>::dispatch_incoming(const char* inData)
 		{	//ASSUMPTION: inData is a full response.
 			size_t data_len = strlen(inData);
 
@@ -169,7 +169,7 @@ namespace CoreZero
 			}
 		}
 
-		void AT_Protocol<false>::process_out_of_band_data(const char* inData)
+		void ATProtocol<false>::process_out_of_band_data(const char* inData)
 		{
 
 		}

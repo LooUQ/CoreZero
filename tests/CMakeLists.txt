@@ -59,11 +59,18 @@ endif()
 
 #	determine test framework
 if ("${TEST_FRAMEWORK}" STREQUAL "microsoft-unittestingframework" AND MSVC)
+	#
+	#	Find Microsoft UnitTesting Framework
+	#
 	set (VS_INSTALL_DIR "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community" CACHE STRING "Visual Studio install location")
 	set (TARGET_TEST_FRAMEWORK_DIR "${VS_INSTALL_DIR}\\VC\\Auxiliary\\VS\\UnitTest")	
 elseif("${TEST_FRAMEWORK}" STREQUAL "google-gtest")
+	#
+	#	Git GoogleTest
+	#		https://google.github.io/styleguide/cppguide.html#Classes
+
 	include (FetchContent)
-	#	git google test
+	#	git google/googletest
 	FetchContent_Declare(
 		googletest
 		GIT_REPOSITORY https://github.com/google/googletest.git
@@ -83,13 +90,26 @@ elseif("${TEST_FRAMEWORK}" STREQUAL "google-gtest")
 	set_target_properties(gmock PROPERTIES FOLDER ${EXTERNAL_DEPENDENCIES_FILTER}/google)
 	set_target_properties(gmock_main PROPERTIES FOLDER ${EXTERNAL_DEPENDENCIES_FILTER}/google)
 elseif("${TEST_FRAMEWORK}" STREQUAL "boost-test")
+	#
+	#	Boost Test
+	#
+	include (FetchContent)
+	#	get boostorg/test
+	FetchContent_Declare(
+		boosttest
+		GIT_REPOSITORY https://github.com/boostorg/test.git
+		GIT_TAG master
+	)
+
+	FetchContent_GetProperties(boosttest)
+	#	prevent boost test compiler/linker option overriding
+	set (boosttest_force_shared_crt ON CACHE BOOL "" FORCE)
+	if (NOT boosttest_POPULATED)
+		FetchContent_Populate(boosttest)
+		add_subdirectory("${boosttest_SOURCE_DIR}" "${boosttest_BINARY_DIR}")
+	endif()
+	#	filter boost test targets
 endif()
-
-
-#	include that test framework
-#include_directories("${TARGET_TEST_FRAMEWORK_DIR}/include")
-#link_libraries("${TARGET_TEST_FRAMEWORK_DIR}/lib/x86/Microsoft.VisualStudio.TestTools.CppUnitTestFramework.lib")
-
 
 #	define method for adding test method
 macro(add_unit_test UNIT_TEST_NAME)	
@@ -98,7 +118,7 @@ macro(add_unit_test UNIT_TEST_NAME)
 		NAME "${UNIT_TEST_NAME}"
 		COMMAND "${UNIT_TEST_NAME}"
 	)
-	target_include_directories("${UNIT_TEST_NAME}" PUBLIC "${CMAKE_SOURCE_DIR}/include")
+	target_include_directories("${UNIT_TEST_NAME}" PRIVATE "${CMAKE_SOURCE_DIR}/include")
 	target_link_libraries("${UNIT_TEST_NAME}" "${PROJECT_LIB_NAME}")
 	target_link_libraries("${UNIT_TEST_NAME}" gtest gmock gtest_main)
 	set_target_properties("${UNIT_TEST_NAME}" PROPERTIES FOLDER ${UNIT_TESTS_FILTER})
@@ -114,3 +134,4 @@ endmacro()
 add_unit_test("Event-tests"	"src/EventTests.cpp")
 add_unit_test("Delegate-tests" "src/DelegateTests.cpp")
 add_unit_test("Async-tests" "src/AsyncTests.cpp")
+add_unit_test("ATProtocol-tests" "src/ATProtocolTests.cpp")

@@ -40,12 +40,12 @@ namespace CoreZero
 	namespace Utility
 	{
 		template <bool VERBOSE = false>
-		class AT_Protocol;
+		class ATProtocol;
 
 		template <typename ... RESULTS>
 		class AT_Command final
 		{
-			friend AT_Protocol<false>;
+			friend ATProtocol<false>;
 		public:
 			template <unsigned N, typename ... CMD_ARGS>
 			AT_Command(const char(&command)[N], CMD_ARGS ...  cmdArguments)

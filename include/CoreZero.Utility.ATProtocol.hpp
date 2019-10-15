@@ -1,5 +1,5 @@
 /******************************************************************************
-*	\file	CoreZero.Utility.AT_Protocol.h
+*	\file	CoreZero.Utility.ATProtocol.h
 *	\author	Jensen Miller
 *	\details AT Protocol class implementation
 *
@@ -26,10 +26,9 @@
 #ifndef COREZERO_UTILITY_ATPROTOCOL_H_
 #define COREZERO_UTILITY_ATPROTOCOL_H_
 
-#include <CZSystem.Communication.h>
 
 #include "atcmd/AT_Def.hpp"
-#include "atcmd/AT_Command.hpp"
+#include "atcmd/ATCommand.hpp"
 #include "CoreZero.Memory.hpp"
 #include "CoreZero.Utility.StringBuilder.h"
 #include "CoreZero.Async.h"
@@ -40,10 +39,10 @@ namespace CoreZero
 	namespace Utility
 	{
 		/**********************************************************************
-		 *	AT_Protocol operating with numeric results.
+		 *	ATProtocol operating with numeric results.
 		 */
 		template<>
-		class AT_Protocol<false> final
+		class ATProtocol<false> final
 		{
 		public:
 			enum response_val
@@ -57,12 +56,12 @@ namespace CoreZero
 		//	Constructors.
 		//
 		public:		
-			AT_Protocol(decltype(nullptr)) {}
-			AT_Protocol(Delegate<size_t(const char*, size_t)>* writeCommandMethod);
+			ATProtocol(decltype(nullptr)) {}
+			ATProtocol(Delegate<size_t(const char*, size_t)>* writeCommandMethod);
 			
-			AT_Protocol& operator=(AT_Protocol&& otherProtocol) noexcept;
+			ATProtocol& operator=(ATProtocol&& otherProtocol) noexcept;
 
-			~AT_Protocol();
+			~ATProtocol();
 
 
 		//
@@ -108,7 +107,7 @@ namespace CoreZero
 
 
 		template<typename ...RESULTS>
-		inline int AT_Protocol<false>::SendCommand(const AT_Command<RESULTS...>& commandDefinition)
+		inline int ATProtocol<false>::SendCommand(const AT_Command<RESULTS...>& commandDefinition)
 		{
 			//	set the response location
 			m_responseLocation = &commandDefinition.m_buffer;
@@ -126,11 +125,11 @@ namespace CoreZero
 
 		/*
 		template <>
-		class AT_Protocol<VERBOSE_RESULTS>	final
+		class ATProtocol<VERBOSE_RESULTS>	final
 		{
 		public:
-			AT_Protocol();
-			~AT_Protocol();
+			ATProtocol();
+			~ATProtocol();
 
 		public:
 			template <typename ... RESULTS>
