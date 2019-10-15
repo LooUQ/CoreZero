@@ -7,20 +7,20 @@ namespace CoreZero
 {
 	namespace Utility
 	{
-		template <bool VERBOSE> struct AT_ResponseCode;
-		template<> struct AT_ResponseCode<false>
+		template <bool VERBOSE> struct ATResponseCode;
+		template<> struct ATResponseCode<false>
 		{
 			enum
 			{
-				OK = 0,
-				ERROR = 4
+				atOk = 0,
+				atError = 4
 			};
 		};
 
-		template<> struct AT_ResponseCode<true>
+		template<> struct ATResponseCode<true>
 		{
-			static constexpr const char OK[] = "OK";
-			static constexpr const char ERROR[] = "ERROR";
+			static constexpr const char atOK[] = "OK";
+			static constexpr const char atERROR[] = "ERROR";
 		};
 
 		constexpr const char AT_Header[] = "AT";

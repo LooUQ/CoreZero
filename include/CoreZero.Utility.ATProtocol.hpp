@@ -69,7 +69,7 @@ namespace CoreZero
 		//
 		public:
 			template <typename ... RESULTS>
-			int SendCommand(const AT_Command<RESULTS...>& commandDefinition);
+			int SendCommand(const ATCommand<RESULTS...>& commandDefinition);
 			int SendCommand(const char cmd[]);
 			int SendCommandF(const char format[], ...);			
 
@@ -107,7 +107,7 @@ namespace CoreZero
 
 
 		template<typename ...RESULTS>
-		inline int ATProtocol<false>::SendCommand(const AT_Command<RESULTS...>& commandDefinition)
+		inline int ATProtocol<false>::SendCommand(const ATCommand<RESULTS...>& commandDefinition)
 		{
 			//	set the response location
 			m_responseLocation = &commandDefinition.m_buffer;
@@ -133,7 +133,7 @@ namespace CoreZero
 
 		public:
 			template <typename ... RESULTS>
-			char* SendCommand(const AT_Command<RESULTS...>& commandDefinition);
+			char* SendCommand(const ATCommand<RESULTS...>& commandDefinition);
 
 			char* SendCommand(const char cmd[]);
 			char* SendCommandF(const char format[], ...);

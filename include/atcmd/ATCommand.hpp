@@ -1,7 +1,7 @@
 /******************************************************************************
 *	AT Command class implementation
 *
-*	\file AT_Command.hpp
+*	\file ATCommand.hpp
 *	\author Jensen Miller
 *
 *	Copyright (c) 2019 LooUQ Incorporated.
@@ -43,12 +43,12 @@ namespace CoreZero
 		class ATProtocol;
 
 		template <typename ... RESULTS>
-		class AT_Command final
+		class ATCommand final
 		{
 			friend ATProtocol<false>;
 		public:
 			template <unsigned N, typename ... CMD_ARGS>
-			AT_Command(const char(&command)[N], CMD_ARGS ...  cmdArguments)
+			ATCommand(const char(&command)[N], CMD_ARGS ...  cmdArguments)
 				: m_buffer(nullptr)
 				, m_bufferSize(0)
 				, m_command(command)
@@ -68,7 +68,7 @@ namespace CoreZero
 				}
 			}
 
-			~AT_Command()
+			~ATCommand()
 			{
 				delete[] m_buffer;
 			}
@@ -153,22 +153,22 @@ namespace CoreZero
 
 			inline void parse_result(int& intResult)
 			{
-				sscanf(m_rspParsePtr, "%d", &intResult);
+				(void)sscanf(m_rspParsePtr, "%d", &intResult);
 			}
 
 			inline void parse_result(unsigned& uintResult)
 			{
-				sscanf(m_rspParsePtr, "%u", &uintResult);
+				(void)sscanf(m_rspParsePtr, "%u", &uintResult);
 			}
 
 			inline void parse_result(char strResult[])
 			{
-				sscanf(m_rspParsePtr, "%s", strResult);
+				(void)sscanf(m_rspParsePtr, "%s", strResult);
 			}
 
 			inline void parse_result(CoreZero::String& czStringResult)
 			{
-				sscanf(m_rspParsePtr, "%s", czStringResult.data());
+				(void)sscanf(m_rspParsePtr, "%s", czStringResult.data());
 				czStringResult.refresh();
 			}
 
