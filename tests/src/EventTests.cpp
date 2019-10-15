@@ -6,7 +6,6 @@
 #include <CoreZero.Event.hpp>
 #include <string>
 
-using namespace CoreZero;
 
 //	Aliases for Google Tests <-> Microsoft UnitTest Framework
 namespace Assert
