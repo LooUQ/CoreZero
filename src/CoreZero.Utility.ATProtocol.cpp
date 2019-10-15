@@ -1,37 +1,54 @@
 //	Copyright (c) 2019 LooUQ Incorporated.
 
 //	Licensed under the GNU GPLv3. See LICENSE file in the project root for full license information.
-#include "CoreZero.Utility.AT_Protocol.hpp"
 
+#include "CoreZero.Utility.ATProtocol.hpp"
+#include "atcmd/ATCommand.hpp"
 #include <stdarg.h>
 #include <ctype.h>
 
+
+/*--------------------.
+ | Control Characters |
+ `--------------------*/
+
 #define LF	'\n'
 #define CR	'\r'
-
-
 
 namespace CoreZero
 {
 	namespace Utility
 	{
+
+		ATProtocol<false>::ATProtocol(Delegate<size_t(const char*, size_t)>* writeCommandMethod)
+			: m_writeFn(writeCommandMethod)
+		{
+			m_commandBuilder = StringBuilder(AT_Header, AT_MaxCommandLen);
+		}
+
+
+
 		/**********************************************************************
 		 *	\brief Destructor.
 		 */
-		AT_Protocol<false>::~AT_Protocol()
+		ATProtocol<false>::~ATProtocol()
 		{
-			//	Delete buffer.
-			delete[] m_buffer;
+
 		}
 
-		void AT_Protocol<false>::Initialize()
-		{
-			m_buffer = new char[AT_MaxCommandLen];
-			strncpy(m_buffer, AT_Header, sizeof(AT_Header));
-			m_bufSize = 2;
 
+		ATProtocol<false>& ATProtocol<false>::operator=(ATProtocol&& otherProtocol) noexcept
+		{
+			m_writeFn = otherProtocol.m_writeFn;
+			otherProtocol.m_writeFn = nullptr;
+
+			m_commandBuilder = (StringBuilder&&)otherProtocol.m_commandBuilder;
+
+			//	On move execute runtime initializiation
 			SendCommand("E0");
 			SendCommand("V0");
+
+			return *this;
 		}
 
 
@@ -42,12 +59,11 @@ namespace CoreZero
 		 *	\param[in] cmd The AT command to send.
 		 *	\returns The command's result code.
 		 */
-		int AT_Protocol<false>::SendCommand(const char cmd[])
+		int ATProtocol<false>::SendCommand(const char cmd[])
 		{
 			int result = -1;
 
-			strcat(m_buffer, cmd);
-			m_bufSize += strlen(cmd);
+			m_commandBuilder.Append(cmd);
 
 			m_awaitingResponse = true;
 			send_command();
@@ -68,13 +84,13 @@ namespace CoreZero
 		 *	\param[in] ... The arguments.
 		 *	\returns The command's result code.
 		 */
-		int AT_Protocol<false>::SendCommandF(const char format[], ...)
+		int ATProtocol<false>::SendCommandF(const char format[], ...)
 		{
 			int result = -1;
 
 			va_list cmd_args;
-			va_start(cmd_args, format);
-			m_bufSize += vsprintf(m_buffer + m_bufSize, format, cmd_args);
+			va_start(cmd_args, format);			
+			m_commandBuilder.AppendFormat(format, cmd_args);
 			va_end(cmd_args);
 
 			m_awaitingResponse = true;
@@ -87,20 +103,24 @@ namespace CoreZero
 			return result;
 		}
 
-		void AT_Protocol<false>::poll()
-		{			
-			// device->get_available
+
+
+		int ATProtocol<false>::Parse(const char* responseData, size_t responseLen)
+		{
+			dispatch_incoming(responseData);
+			return 0;
 		}
+
+
 
 		/**********************************************************************
 		 *	\brief Send the buffer holding the command.
 		 */
-		void AT_Protocol<false>::send_command()
-		{
-			m_buffer[m_bufSize++] = CR;			
-			// \ToDo: device->write(m_buffer, m_bufSize);
-			m_buffer[sizeof(AT_Header) - 1] = NULL;
-			m_bufSize = sizeof(AT_Header) - 1;
+		void ATProtocol<false>::send_command()
+		{						
+			m_commandBuilder.Append(CR);
+			(*m_writeFn)(m_commandBuilder.AsCString(), m_commandBuilder.Length());			
+			m_commandBuilder.Reset(sizeof(AT_Header)-1);
 		}
 
 
@@ -108,12 +128,10 @@ namespace CoreZero
 		/**********************************************************************
 		 *	\brief Await the response result.
 		 */
-		void AT_Protocol<false>::await_result()
+		void ATProtocol<false>::await_result()
 		{
 			while (m_awaitingResponse)
-			{
-				poll();
-			}
+				;
 		}
 
 
@@ -123,7 +141,7 @@ namespace CoreZero
 		 *
 		 *	\param[in] inData The incoming data.
 		 */
-		void AT_Protocol<false>::dispatch_incoming(const char* inData)
+		void ATProtocol<false>::dispatch_incoming(const char* inData)
 		{	//ASSUMPTION: inData is a full response.
 			size_t data_len = strlen(inData);
 
@@ -151,7 +169,7 @@ namespace CoreZero
 			}
 		}
 
-		void AT_Protocol<false>::process_out_of_band_data(const char* inData)
+		void ATProtocol<false>::process_out_of_band_data(const char* inData)
 		{
 
 		}

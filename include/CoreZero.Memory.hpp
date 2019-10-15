@@ -33,7 +33,7 @@ namespace CoreZero
 {
 	namespace Memory
 	{
-		template <typename T = char, unsigned int N = 64U>
+		template <typename T = char>
 		class I_Buffer
 		{
 		public:

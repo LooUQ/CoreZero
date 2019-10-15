@@ -1,5 +1,5 @@
 /******************************************************************************
-*	\file	CoreZero.Memory.RingBuffer.hpp
+*	\file	CoreZero.Memory.CircularBuffer.hpp
 *	\author	Jensen Miller
 *	\date	May 14, 2018
 *
@@ -46,15 +46,15 @@ namespace CoreZero
 		 *		and writes, optimizing out loops on GetT.
 		 */
 		template<typename T = char, size_t N = 64U, typename container = T * >
-		class RingBuffer
-			: public Memory::I_Buffer<T, N>
+		class CircularBuffer
+			: public Memory::I_Buffer<T>
 		{
 			//
 			//	Constructors
 			//
 		public:
-			RingBuffer();
-			virtual ~RingBuffer();
+			CircularBuffer();
+			virtual ~CircularBuffer();
 
 
 			//
@@ -92,7 +92,7 @@ namespace CoreZero
 				//	Constructors
 				//
 			public:
-				iterator(RingBuffer * cRingBuffer, size_t position) : m_CRingBuffer(cRingBuffer), m_Position(position) {}
+				iterator(CircularBuffer * cRingBuffer, size_t position) : m_CRingBuffer(cRingBuffer), m_Position(position) {}
 
 
 				//
@@ -148,7 +148,7 @@ namespace CoreZero
 				//	Associations
 				//
 			private:
-				RingBuffer * m_CRingBuffer = nullptr;
+				CircularBuffer * m_CRingBuffer = nullptr;
 			};
 
 			/// Returns an interator to the current position of the ring buffer
@@ -180,7 +180,7 @@ namespace CoreZero
 
 
 		template<typename T, size_t N, typename container>
-		inline RingBuffer<T, N, container>::RingBuffer()
+		inline CircularBuffer<T, N, container>::CircularBuffer()
 			: m_Capacity(N)
 			, m_length(0)
 			, m_Begin(0)
@@ -190,19 +190,19 @@ namespace CoreZero
 		}
 
 		template<typename T, size_t N, typename container>
-		inline RingBuffer<T, N, container>::~RingBuffer()
+		inline CircularBuffer<T, N, container>::~CircularBuffer()
 		{
 			if (m_Buffer == nullptr) { delete m_Buffer; }
 		}
 
 		template<typename T, size_t N, typename container>
-		inline const T & RingBuffer<T, N, container>::Peek() const
+		inline const T & CircularBuffer<T, N, container>::Peek() const
 		{
 			return m_Buffer[m_Begin];
 		}
 
 		template<typename T, size_t N, typename container>
-		inline void RingBuffer<T, N, container>::Seek(size_t skipTs)
+		inline void CircularBuffer<T, N, container>::Seek(size_t skipTs)
 		{
 			skipTs = (m_length < skipTs) ? m_length : skipTs;
 			m_Begin += skipTs;
@@ -211,7 +211,7 @@ namespace CoreZero
 		}
 
 		template<typename T, size_t N, typename container>
-		inline void RingBuffer<T, N, container>::PutT(const T & c)
+		inline void CircularBuffer<T, N, container>::PutT(const T & c)
 		{
 			if (m_Begin == m_End) { return; }
 			m_Buffer[m_End] = c;
@@ -220,7 +220,7 @@ namespace CoreZero
 		}
 
 		template<typename T, size_t N, typename container>
-		inline T RingBuffer<T, N, container>::GetT()
+		inline T CircularBuffer<T, N, container>::GetT()
 		{
 			T& obj = m_Buffer[m_Begin];
 			if (m_length)
@@ -232,7 +232,7 @@ namespace CoreZero
 		}
 
 		template<typename T, size_t N, typename container>
-		inline unsigned int RingBuffer<T, N, container>::PutN(const T pArray[], const unsigned int n)
+		inline unsigned int CircularBuffer<T, N, container>::PutN(const T pArray[], const unsigned int n)
 		{
 			// If there are no bytes to put, return
 			if (!n) { return 0; }
@@ -270,7 +270,7 @@ namespace CoreZero
 		}
 
 		template<typename T, size_t N, typename container>
-		inline unsigned int RingBuffer<T, N, container>::GetN(T pArray[], const unsigned int n)
+		inline unsigned int CircularBuffer<T, N, container>::GetN(T pArray[], const unsigned int n)
 		{
 			if ((!n) || (!m_length)) { return NULL; }
 
@@ -301,7 +301,7 @@ namespace CoreZero
 		}
 
 		template<typename T, size_t N, typename container>
-		inline unsigned int RingBuffer<T, N, container>::FindT(T findT) const
+		inline unsigned int CircularBuffer<T, N, container>::FindT(T findT) const
 		{
 			if (m_length == 0) { return 0; }
 
@@ -322,7 +322,7 @@ namespace CoreZero
 		}
 
 		template<typename T, size_t N, typename container>
-		inline unsigned int RingBuffer<T, N, container>::expandBuffer(unsigned int nMore)
+		inline unsigned int CircularBuffer<T, N, container>::expandBuffer(unsigned int nMore)
 		{
 			// Save state of available data
 			size_t temp_available = m_length;
@@ -345,19 +345,19 @@ namespace CoreZero
 
 
 		template<typename T, size_t N, typename container>
-		inline unsigned int RingBuffer<T, N, container>::GetLength() const
+		inline unsigned int CircularBuffer<T, N, container>::GetLength() const
 		{
 			return m_length;
 		}
 
 		template<typename T, size_t N, typename container>
-		inline unsigned int RingBuffer<T, N, container>::GetCapacity() const
+		inline unsigned int CircularBuffer<T, N, container>::GetCapacity() const
 		{
 			return m_Capacity;
 		}
 	}
 }
 
-typedef CoreZero::Memory::RingBuffer<> StringRing;
+typedef CoreZero::Memory::CircularBuffer<> StringRing;
 
 #endif // !CoreZero

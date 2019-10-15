@@ -30,6 +30,7 @@
 #include "AT_Def.hpp"
 
 #include "CoreZero.String.hpp"
+#include "CoreZero.Async.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -38,13 +39,13 @@ namespace CoreZero
 {
 	namespace Utility
 	{
-		template <bool VERBOSE>
-		class AT_Protocol;
+		template <bool VERBOSE = false>
+		class ATProtocol;
 
 		template <typename ... RESULTS>
 		class AT_Command final
 		{
-			friend AT_Protocol<false>;
+			friend ATProtocol<false>;
 		public:
 			template <unsigned N, typename ... CMD_ARGS>
 			AT_Command(const char(&command)[N], CMD_ARGS ...  cmdArguments)
@@ -62,7 +63,7 @@ namespace CoreZero
 				{
 					//	Write Command			
 					m_buffer[m_bufferSize++] = AT_WriteOp;
-					m_buffer[m_bufferSize] = NULL;
+					m_buffer[m_bufferSize] = '\0';
 					build_command(cmdArguments...);
 				}
 			}
@@ -144,10 +145,10 @@ namespace CoreZero
 				return get_results(results...);
 			}
 
-			template <typename T, typename ... ARGS>
-			void GetAsync(const T& lambda)
+			template <typename LAMBDATy_>
+			void GetAsync(const LAMBDATy_& _callback)
 			{
-				
+				m_asyncCallback = Create_MemberDelegate(_callback, &LAMBDATy_::operator());
 			}
 
 			inline void parse_result(int& intResult)
@@ -200,7 +201,8 @@ namespace CoreZero
 #endif // _DEBUG
 
 
-
+		private:
+			CoreZero::Delegate<void(RESULTS...)>* m_asyncCallback = nullptr;
 
 		private:
 			const char* m_command;

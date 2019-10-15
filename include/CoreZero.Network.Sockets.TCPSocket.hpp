@@ -36,24 +36,24 @@ namespace CoreZero
 {
 	namespace Network
 	{
-		class TcpSocket
-			: public I_Socket
-			, public Streams::Stream<uint8_t>
-		{			
-		//
-		//	Methods
-		//
-		public:
-			//	Inherited via I_Socket
-			virtual int Connect(const IPv4_Address& remoteAddress, uint16_t remotePort) override;
-			virtual int Listen(const IPv4_Address& localAddress, uint16_t localPort) override;
+		//class TcpSocket
+		//	: public I_Socket
+		//	, public Streams::Stream<uint8_t>
+		//{			
+		////
+		////	Methods
+		////
+		//public:
+		//	//	Inherited via I_Socket
+		//	virtual int Connect(const IPv4_Address& remoteAddress, uint16_t remotePort) override;
+		//	virtual int Listen(const IPv4_Address& localAddress, uint16_t localPort) override;
 
-			//	Inherited via TStream<>
-			virtual void	Put(const uint8_t item) override;
-			virtual size_t	Write(const uint8_t block[], size_t blocksz) override;
-			virtual void	operator<<(const uint8_t block[]) override;
-			virtual void	operator<<(const CoreZero::String& data);
-		};
+		//	//	Inherited via TStream<>
+		//	virtual void	Put(const uint8_t item) override;
+		//	virtual size_t	Write(const uint8_t block[], size_t blocksz) override;
+		//	virtual void	operator<<(const uint8_t block[]) override;
+		//	virtual void	operator<<(const CoreZero::String& data);
+		//};
 	}
 }
 

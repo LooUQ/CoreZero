@@ -62,7 +62,7 @@ namespace CoreZero
 
 	public:
 		/// Function operator that uses callback
-		RETTy_ operator()(ARGS... arguments_) {			
+		RETTy_ operator()(ARGS... arguments_) noexcept {			
 			return (*p_eventHandler)(arguments_...);
 		}
 

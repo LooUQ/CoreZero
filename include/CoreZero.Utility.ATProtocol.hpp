@@ -1,8 +1,7 @@
 /******************************************************************************
-*	AT Protocol class implementation
-*
-*	\file AT_Protocol.hpp
-*	\author Jensen Miller
+*	\file	CoreZero.Utility.ATProtocol.h
+*	\author	Jensen Miller
+*	\details AT Protocol class implementation
 *
 *	Copyright (c) 2019 LooUQ Incorporated.
 *
@@ -27,38 +26,54 @@
 #ifndef COREZERO_UTILITY_ATPROTOCOL_H_
 #define COREZERO_UTILITY_ATPROTOCOL_H_
 
-#include "atcmd/AT_Def.hpp"
-#include "atcmd/AT_Command.hpp"
 
+#include "atcmd/AT_Def.hpp"
+#include "atcmd/ATCommand.hpp"
+#include "CoreZero.Memory.hpp"
+#include "CoreZero.Utility.StringBuilder.h"
 #include "CoreZero.Async.h"
 #include "CoreZero.CompileTime.ConditionalTyping.hpp"
-
-constexpr const wchar_t PortName[] = L"\\\\.\\COM10";
-
-#define AT_OK	(0)
 
 namespace CoreZero
 {
 	namespace Utility
 	{
+		/**********************************************************************
+		 *	ATProtocol operating with numeric results.
+		 */
 		template<>
-		class AT_Protocol<false> final
-			//: base_thread_coordinator
+		class ATProtocol<false> final
 		{
 		public:
-			constexpr AT_Protocol() {}
+			enum response_val
+			{
+				ok =			0x00,
+				error =			0x04,
+				ready_data =	0x11,
+				no_CR =			0xFF
+			};
+		//
+		//	Constructors.
+		//
+		public:		
+			ATProtocol(decltype(nullptr)) {}
+			ATProtocol(Delegate<size_t(const char*, size_t)>* writeCommandMethod);
+			
+			ATProtocol& operator=(ATProtocol&& otherProtocol) noexcept;
 
-			~AT_Protocol();
+			~ATProtocol();
 
-			void Initialize();
 
+		//
+		//	Methods
+		//
+		public:
 			template <typename ... RESULTS>
 			int SendCommand(const AT_Command<RESULTS...>& commandDefinition);
-
 			int SendCommand(const char cmd[]);
-			int SendCommandF(const char format[], ...);
+			int SendCommandF(const char format[], ...);			
 
-			void poll();
+			int Parse(const char* responseData, size_t responseLen);
 
 		private:
 			void send_command();
@@ -67,25 +82,32 @@ namespace CoreZero
 			void process_out_of_band_data(const char* inData);
 
 
+		//
+		//	Attributes
+		//
 		private:
-			/// Buffer for command construction.
-			char* m_buffer = nullptr;
+			Delegate<size_t(const char*, size_t)>* m_writeFn = nullptr;
 
-			/// Size of command buffer.
-			size_t m_bufSize = 0;
+			/// Pointer to buffer receiving responses.
+			Memory::I_Buffer<char>* const m_pComBuffer = nullptr;
+
+			/// Buffer for command construction.
+			StringBuilder m_commandBuilder = { nullptr };
 
 			/// Where to put the response.
 			char* const* m_responseLocation = nullptr;
 
 			/// Whether the protocol is awaiting an immediate response.
-			bool m_awaitingResponse = false;
+			volatile bool m_awaitingResponse = false;
 
 			///	The most recent result code.
 			int m_recentResult = 0;
 		};
 
+
+
 		template<typename ...RESULTS>
-		inline int AT_Protocol<false>::SendCommand(const AT_Command<RESULTS...>& commandDefinition)
+		inline int ATProtocol<false>::SendCommand(const AT_Command<RESULTS...>& commandDefinition)
 		{
 			//	set the response location
 			m_responseLocation = &commandDefinition.m_buffer;
@@ -101,14 +123,13 @@ namespace CoreZero
 
 
 
-
 		/*
 		template <>
-		class AT_Protocol<VERBOSE_RESULTS>	final
+		class ATProtocol<VERBOSE_RESULTS>	final
 		{
 		public:
-			AT_Protocol();
-			~AT_Protocol();
+			ATProtocol();
+			~ATProtocol();
 
 		public:
 			template <typename ... RESULTS>

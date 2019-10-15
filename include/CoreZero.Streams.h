@@ -28,339 +28,226 @@
 #ifndef COREZERO_STREAMS_H_
 #define COREZERO_STREAMS_H_
 
-#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
+#include "CoreZero.Delegate.hpp"
 #include "CoreZero.Memory.RingBuffer.hpp"
 
 namespace CoreZero
 {
+	template <typename T>
+	using WriteMethod = Delegate<unsigned(const T[], unsigned)>;
+
+	template <typename T>
+	using ReadMethod = Delegate<unsigned(T[], unsigned)>;
+
 	namespace Streams
 	{
-		/**********************************************************************
-		 *	\class Stream CoreZero.Streams.hpp
-		 *	\brief A templated io stream.
-		 *	\details An input/output stream class that can N number of T elements.
-		 */
-		template<typename T = char, unsigned int N = 64U, typename ULBuffer = Memory::RingBuffer<T,N>>
-		class Stream
-		{
-		//
-		//	Constructors
-		//
-		public:
-			Stream() : m_Buffer(new ULBuffer) {}
-			virtual ~Stream() { delete m_Buffer; }
+		//template <typename T = char>
+		//struct InputStream
+		//{		
+		//	InputStream(decltype(nullptr)) {}
+		//	InputStream(Memory::I_Buffer<T>* _buffer);
+		//	virtual ~InputStream();
 
-		protected:
-			Stream(ULBuffer * _buffer) : m_Buffer(_buffer) {}
+		//	virtual size_t Read(T block[], size_t blockSize);
+		//	virtual InputStream& ReadLine(T destBuffer[], size_t destSize);
 
+		//	virtual size_t Count() const;
 
-		//
-		//	Methods
-		//
-		public:
-			virtual void	Put(const T item);
-			virtual T		Get();
-			virtual size_t	Write(const T block[], size_t blocksz);
-			virtual size_t	Read(T block[], size_t blocksz);
-			virtual void	Seek(size_t skipTs);
-			virtual bool	AvailableForRead() const;
-			virtual bool	AvailableForWrite() const;
-			virtual void	Flush();
-			virtual size_t	ReadUntil(const T& t);
+		//	virtual void Seek(size_t _skip);
+		//	virtual const T& Peek();
+		//	virtual void Flush();
 
+		//private:
+		//	Memory::I_Buffer<T>* m_buffer = nullptr;
+		//};
 
-		//
-		//	Operators
-		//
-		public:
-			virtual void operator<<( const T block[] );
-			virtual void operator>>( T block[] );
-			virtual void operator>>(Stream<T, N, ULBuffer>* otherStream);
-			virtual void operator=( const Stream& other );
+		//template <typename T = char>
+		//struct OutputStream
+		//{		
+		//	OutputStream(decltype(nullptr)) {}
+		//	OutputStream(Memory::I_Buffer<T>* _buffer);
+		//	virtual ~OutputStream();
 
+		//	virtual size_t Write(const T block[], size_t blockSize);
+		//	virtual OutputStream& WriteLine(const T srcBuffer[], size_t srcSize);
 
-		//
-		//	Getters and Setters
-		//
-		public:
-			size_t GetAvailable() const;
-			void SeStreamBlocks(size_t blockSz);
-			bool EoF() const;
+		//	virtual T Fill() const;
+		//	virtual void Fill(T fillItem);
 
-		protected:
-			/// The size of blocks to stream with >><<
-			size_t m_SBlockSize = NULL;
+		//	virtual void Seek(size_t _skip);
+		//	virtual void Flush();
 
-			/// The ring buffer holding the data
-			Memory::I_Buffer<T,N> * m_Buffer;
+		//private:
+		//	Memory::I_Buffer<T>* m_buffer = nullptr;
+		//};
 
-		private:
-			struct {
-				uint8_t	eofbit	:	1;
-				uint8_t	failbit :	1;
-				uint8_t	badbit	:	1;
-				uint8_t	goodbit	:	1;
-			} m_Flags;			
-		};
+	//	template<typename T = char>
+	//	class IO_Stream
+	//	{
+	//	public:
+	//		IO_Stream(decltype(nullptr)) : m_flags(4) {}
+	//		IO_Stream(Memory::I_Buffer<T>* inputBuffer, Memory::I_Buffer<T>* outputBuffer);
+	//		virtual ~IO_Stream();
 
 
-		/* ----------------------------------------------------------------------- */
+	//	//
+	//	//	Methods
+	//	//
+	//	public:
+	//		virtual void Put(const T item);
+	//		virtual T Get();
+	//		virtual size_t Write(const T block[], size_t blockSize);
+	//		virtual size_t Read(T block[], size_t blockSize);			
+	//		virtual void Seek(size_t _skip);
+	//		virtual void Flush();
 
 
+	//	//
+	//	//	Setters & Getters
+	//	//
+	//	public:
+	//		virtual IO_Stream& GetLine(T destBuffer[], size_t destSize);
 
-		/**
-		 *	@brief Puts T item into stream buffer.
-		 *
-		 *	@param[in] item The element to put into the stream.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline void Stream<T, N, ULBuffer>::Put(const T item)
-		{			
-			m_Buffer->PutT(item);
-		}
+	//		virtual T Fill() const;
+	//		virtual void Fill(T fillItem);
 
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline T Stream<T, N, ULBuffer>::Get()
-		{
-			return m_Buffer->GetT();
-		}
+	//		virtual size_t Count() const;
 
+	//	//
+	//	//	Attributes
+	//	//
+	//	private:
+	//		/// The current count of items available in the stream.
+	//		size_t m_count = 0;
 
-		/**
-		 *	@brief Writes an array of T elements to the stream.
-		 *	
-		 *	@param[in] block The block of T elements to copy into the stream.
-		 *	@param[in] blocksz The number of T elements in the block.
-		 *	@returns The number of T elements that fit into the stream.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline size_t Stream<T, N, ULBuffer>::Write(const T block[], size_t blocksz)
-		{
-			if (!blocksz) return NULL;
-			size_t result;
-			result = m_Buffer->PutN(block, blocksz);
-			m_Flags.eofbit = 0;						
-			return result;
-		}
+	//		/// The flags representing the current status of the stream.
+	//		struct {
+	//			uint8_t eofbit : 1;
+	//			uint8_t failbit : 1;
+	//			uint8_t badbit : 1;
+	//			uint8_t goodbit : 1;
+	//		} m_flags = { 0 };
+
+	//		/// The input buffer
+	//		Memory::I_Buffer<T> * m_inputBuf = nullptr;
+
+	//		/// The output buffer
+	//		Memory::I_Buffer<T>* m_outputBuf = nullptr;
+	//	};
+	//}
 
 
 
-		/**
-		 *	@brief Reads elements from the stream.
-		 *	
-		 *	@param[out] block The block to insert the element into.
-		 *	@param[in] blocksz The number of elements to read from the stream.
-		 *	@returns The number of elements read into the block.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline size_t Stream<T, N, ULBuffer>::Read(T block[], size_t blocksz)
-		{			
-			if (m_Flags.eofbit) return NULL;
-			
-			size_t result = m_Buffer->GetN(block, blocksz);
-			if (result == NULL)
-			{
-				m_Flags.eofbit = 1;
-			}
-			else
-			{
-				m_Flags.goodbit = 1;
-			}
-			return result;
-		}
+	//namespace Streams
+	//{
+	//	template<typename T>
+	//	inline IO_Stream<T>::IO_Stream(Memory::I_Buffer<T>* inputBuffer, Memory::I_Buffer<T>* outputBuffer)
+	//		: m_inputBuf(inputBuffer)
+	//		, m_outputBuf(outputBuffer)
+	//		, m_flags(8)
+	//	{
+	//		assert	(m_inputBuf);
+	//		assert	(m_outputBuf);
+	//	}
 
 
 
-		/**
-		 *	@brief Skip through the stream.
-		 *
-		 *	@param[in] skipTs The number of elements to skip.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline void Stream<T, N, ULBuffer>::Seek(size_t skipTs)
-		{
-			m_Buffer->Seek(skipTs);
-		}
+	//	template<typename T>
+	//	inline IO_Stream<T>::~IO_Stream()
+	//	{
+	//	}
 
 
 
-		/**
-		 *	@brief Check if data is available for read.
-		 *
-		 *	@returns Whether the stream has data available for read.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline bool Stream<T, N, ULBuffer>::AvailableForRead() const
-		{			
-			return (bool)m_Buffer->GetLength();
-		}
-
-
-		/**
-		 *	@brief Check if the stream is able to be written to.
-		 *
-		 *	@returns Whether the stream can be written to.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline bool Stream<T, N, ULBuffer>::AvailableForWrite() const
-		{
-			return true;
-		}
+	//	template<typename T>
+	//	inline void IO_Stream<T>::Put(const T item)
+	//	{
+	//		assert	(m_outputBuf);
+	//		m_outputBuf->PutT(item);
+	//	}
 
 
 
-		/** \todo
-		 *	@brief Flush the stream
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline void Stream<T, N, ULBuffer>::Flush()
-		{
-			Seek(-1);
-		}
-
-
-		/**
-		 *	@brief Read until a specified matching element is found.
-		 *
-		 *	If a matching element is found, the internal read block
-		 *		size is set to the number of elements to read.
-		 *
-		 *	@param[in] t The element to match and stop.
-		 *	@returns The number of elements to read for matching element.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline size_t Stream<T, N, ULBuffer>::ReadUntil(const T& t)
-		{
-			m_SBlockSize = m_Buffer->FindT(t);
-			return m_SBlockSize;
-		}
+	//	template<typename T>
+	//	inline T IO_Stream<T>::Get()
+	//	{
+	//		assert	(m_inputBuf);
+	//		return m_inputBuf->GetT();
+	//	}
 
 
 
-		/**
-		 *	@brief Input Operator.
-		 *
-		 *	Inputs rhs elements into the stream.
-		 *
-		 *	@param[in] block The rhs elements that will be written to the stream.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline void Stream<T, N, ULBuffer>::operator<<(const T block[])
-		{
-			if (!m_SBlockSize)
-			{
-				return;
-			}
-			else
-			{
-				Write(block, m_SBlockSize);
-			}
-		}
+	//	template<typename T>
+	//	inline size_t IO_Stream<T>::Write(const T block[], size_t blockSize)
+	//	{
+	//		size_t result = m_outputBuf->PutN(block, blockSize);	
+	//		m_flags.goodbit = 1;
+	//		return result;
+	//	}
 
 
 
-		/**
-		 *	@brief Output Operator.
-		 *
-		 *	Outputs elements to a rhs block of elements.
-		 *
-		 *	@param[out] block The block to insert the elements into.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline void Stream<T, N, ULBuffer>::operator>>(T block[])
-		{
-			if (!m_SBlockSize)
-			{				
-				Read(block, m_Buffer->GetLength());
-			}
-			else
-			{
-				Read(block, m_SBlockSize);
-			}
-		}
+	//	template<typename T>
+	//	inline size_t IO_Stream<T>::Read(T block[], size_t blockSize)
+	//	{
+	//		if (m_flags.eofbit)
+	//			return 0U;
 
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline void Stream<T, N, ULBuffer>::operator>>(Stream<T, N, ULBuffer>* otherStream)
-		{
-			T * block;
-			size_t block_length;
-			if (!m_SBlockSize)
-			{
-				block_length = m_Buffer->GetLength();
-			}
-			else
-			{
-				block_length = m_SBlockSize;
-			}
-			block = new T[block_length];
-			Read(block, block_length);
-			otherStream->Write(block, block_length);
-			delete[] block;
-		}
+	//		size_t result = m_inputBuf.GetN(block, blockSize);
+	//		result == 0U ? m_flags.eofbit = 1 : m_flags.goodbit = 1;
+	//		return result;
+	//	}
 
 
 
-		/**
-		 *	@brief Copy assignment operator.
-		 *	
-		 *	@param[in] other The other stream to copy.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline void Stream<T, N, ULBuffer>::operator=(const Stream & other)
-		{			
-			this->m_Buffer = other.m_Buffer;
-			this->m_SBlockSize = other.m_SBlockSize;
-			this->m_Flags = other.m_Flags;
-		}
+	//	template<typename T>
+	//	inline void IO_Stream<T>::Seek(size_t _skip)
+	//	{
+	//		
+	//	}
 
 
 
-		/**
-		 *	@brief Gets the available elements waiting in the stream.
-		 *
-		 *	@returns The number of elements available.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline size_t Stream<T, N, ULBuffer>::GetAvailable() const
-		{			
-			return m_Buffer->GetLength();
-		}
+	//	template<typename T>
+	//	inline void IO_Stream<T>::Flush()
+	//	{
+	//	}
 
 
 
-		/**
-		 *	@brief Sets the streaming block size.
-		 *
-		 *	By setting the streaming block, the stream
-		 *		will use this specified size to dictate
-		 *		the input and output operators for data
-		 *		length.
-		 *
-		 *	@param[in] blockSz The size of the blocks being inputed/outputed.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline void Stream<T, N, ULBuffer>::SeStreamBlocks(size_t blockSz)
-		{
-			m_SBlockSize = blockSz;
-		}
+	//	template<typename T>
+	//	inline IO_Stream<T>& IO_Stream<T>::GetLine(T destBuffer[], size_t destSize)
+	//	{
+	//		return *this;
+	//	}
 
 
 
-		/**
-		 *	@brief Get the End-of-file flag.
-		 *
-		 *	@returns Whether the stream is at the end of file.
-		 */
-		template<typename T, unsigned int N, typename ULBuffer>
-		inline bool Stream<T, N, ULBuffer>::EoF() const
-		{
-			return m_Flags.eofbit;
-		}
+	//	template<typename T>
+	//	inline T IO_Stream<T>::Fill() const
+	//	{
+	//		return T();
+	//	}
 
-#pragma endregion
 
+
+	//	template<typename T>
+	//	inline void IO_Stream<T>::Fill(T fillItem)
+	//	{
+	//	}
+
+
+
+	//	template<typename T>
+	//	inline size_t IO_Stream<T>::Count() const
+	//	{
+	//		return size_t();
+	//	}
 	}
 }
 
