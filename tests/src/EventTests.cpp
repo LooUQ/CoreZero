@@ -1,38 +1,52 @@
 //	Copyright (c) 2019 LooUQ Incorporated.
 
 //	Licensed under the GNU GPLv3. See LICENSE file in the project root for full license information.
-#include "CppUnitTest.h"
-#include <string>
+#include <gtest/gtest.h>
 
 #include <CoreZero.Event.hpp>
+#include <string>
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+using namespace CoreZero;
+
+//	Aliases for Google Tests <-> Microsoft UnitTest Framework
+namespace Assert
+{
+	template <typename T>
+	inline void AreEqual(T val1, T val2)
+	{
+		ASSERT_EQ(val1, val2);
+	}
+
+	inline void IsTrue(bool _expectedTrue)
+	{
+		ASSERT_TRUE(_expectedTrue);
+	}
+}
+
 
 namespace CoreZero
 {
 	using TestHandlerType = Delegate<void(int)>;
 
-	int freeSignal = 0;
-	void freeHandler(int val)
+	int free_signal = 0;
+	void OnSignal(int val)
 	{
-		Logger::WriteMessage("Trace: $freeHandler\n");
-		Logger::WriteMessage("Passed val: ");
-		Logger::WriteMessage(std::to_string(val).c_str());
-		Logger::WriteMessage("\n");		
-		freeSignal = 1;
+		//Logger::WriteMessage("Trace: $freeHandler\n");
+		//Logger::WriteMessage("Passed val: ");
+		//Logger::WriteMessage(std::to_string(val).c_str());
+		//Logger::WriteMessage("\n");		
+		free_signal = 1;
 	}
 
-	TEST_CLASS(Event_tests)
+	TEST(EventTest, ConstructAndFire)
 	{
-	public:
-
-		TEST_METHOD(construct_and_trigger)
-		{
-			Event<TestHandlerType> test_ev;
-			test_ev += freeHandler;
-			test_ev(7);
-			Assert::IsTrue(freeSignal);
-			freeSignal = 0;
-		}
-	};
+		//	construct event
+		Event<TestHandlerType> test_event;
+		//	subscribe to static/free handler
+		test_event += OnSignal;
+		//	fire event (issue call)
+		test_event(7);
+		//	assert the handler was fired
+		Assert::IsTrue(free_signal);		
+	}
 }

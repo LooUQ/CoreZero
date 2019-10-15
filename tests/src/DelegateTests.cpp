@@ -8,6 +8,7 @@
 
 using namespace CoreZero;
 
+//	Aliases for Google Tests <-> Microsoft UnitTest Framework
 namespace Assert
 {
 	template <typename T>
