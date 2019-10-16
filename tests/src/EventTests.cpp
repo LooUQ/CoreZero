@@ -2,9 +2,10 @@
 
 //	Licensed under the GNU GPLv3. See LICENSE file in the project root for full license information.
 #include <gtest/gtest.h>
+#include <corezero/event.hpp>
 
-#include <CoreZero.Event.hpp>
 #include <string>
+
 
 
 //	Aliases for Google Tests <-> Microsoft UnitTest Framework
@@ -23,7 +24,7 @@ namespace Assert
 }
 
 
-namespace CoreZero
+namespace corezero
 {
 	using TestHandlerType = Delegate<void(int)>;
 

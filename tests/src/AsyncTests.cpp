@@ -2,8 +2,8 @@
 
 //	Licensed under the GNU GPLv3. See LICENSE file in the project root for full license information.
 #include <gtest/gtest.h>
+#include <corezero/async.hpp>
 
-#include <CoreZero.Async.h>
 #include <string>
 #include <thread>
 
@@ -23,9 +23,9 @@ namespace Assert
 }
 
 
-namespace CoreZero
+namespace corezero
 {
-	void plus_5(Async::Request<int>&& request)
+	void plus_5(async::Request<int>&& request)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 		request.Fulfill(5);
@@ -33,8 +33,8 @@ namespace CoreZero
 
 	TEST(AsyncTest, ConstructAndCopy)
 	{
-		Async::Request<int> async_req;
-		Async::Result<int> async_result = async_req.GetAsyncResult();
+		async::Request<int> async_req;
+		async::Result<int> async_result = async_req.GetAsyncResult();
 
 		std::thread th(plus_5, async_req);
 
@@ -45,8 +45,8 @@ namespace CoreZero
 
 	TEST(AsyncTest, ChainingWithCopies)
 	{
-		Async::Request<int> async_req;
-		Async::Result<int> async_result = async_req.GetAsyncResult();
+		async::Request<int> async_req;
+		async::Result<int> async_result = async_req.GetAsyncResult();
 
 		async_result.Then([](int xplus5)
 			{
