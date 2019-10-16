@@ -2,15 +2,16 @@
 
 //	Licensed under the GNU GPLv3. See LICENSE file in the project root for full license information.
 #include <gtest/gtest.h>
+#include <corezero/utility/atprotocol.hpp>
+
+#include <Win32.Devices.SerialDevice.h>
+constexpr const uint16_t PortNumber = 12;
 
 #include <string>
 #include <thread>
 using namespace std::chrono_literals;
 
-#include <Win32.Devices.SerialDevice.h>
-constexpr const uint16_t PortNumber = 12;
 
-#include <CoreZero.Utility.ATProtocol.hpp>
 
 //	Aliases for Google Tests <-> Microsoft UnitTest Framework
 namespace Assert
@@ -36,9 +37,9 @@ public:
 	}
 };
 
-namespace CoreZero
+namespace corezero
 {
-	namespace Utility
+	namespace utility
 	{
 		namespace tests
 		{
