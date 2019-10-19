@@ -174,6 +174,7 @@ namespace corezero
 		add_chars[0] = _char;
 		add_chars[1] = '\0';
 		(*this) += add_chars;
+		return *this;
 	}
 
 	String & String::operator+=(const String& otherString)
