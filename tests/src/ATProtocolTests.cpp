@@ -4,8 +4,8 @@
 #include <gtest/gtest.h>
 #include <corezero/utility/atprotocol.hpp>
 
-#include <Win32.Devices.SerialDevice.h>
-constexpr const uint16_t PortNumber = 12;
+#include <Win32.Devices.SerialDevice.hpp>
+constexpr const uint16_t PortNumber = 22;
 
 #include <string>
 #include <thread>
@@ -120,8 +120,8 @@ namespace corezero
 
 				Logger::WriteMessage("Manufacturer: ");
 
-				CoreZero::String manufacturer_id;
-				ATCommand<CoreZero::String> ManufacturerIdRequest("+CGMI");
+				String manufacturer_id;
+				ATCommand<String> ManufacturerIdRequest("+CGMI");
 				if (m_protocol.SendCommand(ManufacturerIdRequest) == ATResponseCode<false>::atOk)
 				{
 					manufacturer_id.reserve(32);
@@ -132,8 +132,8 @@ namespace corezero
 
 				Logger::WriteMessage("\nModel: ");
 
-				CoreZero::String model_id;
-				ATCommand<CoreZero::String> ModelIdRequest("+CGMM");
+				String model_id;
+				ATCommand<String> ModelIdRequest("+CGMM");
 				if (m_protocol.SendCommand(ModelIdRequest) == ATResponseCode<false>::atOk)
 				{
 					model_id.reserve(8);
@@ -145,8 +145,8 @@ namespace corezero
 
 				Logger::WriteMessage("\nRevision: ");
 
-				CoreZero::String firmware_revision;
-				ATCommand<CoreZero::String> RevisionIdRequest("+CGMR");
+				String firmware_revision;
+				ATCommand<String> RevisionIdRequest("+CGMR");
 				if (m_protocol.SendCommand(RevisionIdRequest) == ATResponseCode<false>::atOk)
 				{
 					firmware_revision.reserve(32);
