@@ -6,7 +6,7 @@
 #	Copyright (C) 2019 LooUQ Incorporated.
 #	Licensed under the GNU license.
 #==============================================================================
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.11)
 
 set (UNIT_TEST_TARGET_NAME "${PROJECT_NAME}--tests")
 
@@ -140,7 +140,7 @@ add_unit_test("Async-tests" "src/AsyncTests.cpp")
 add_unit_test("String-tests" "src/StringTests.cpp")
 
 add_unit_test("ATProtocol-tests" "src/ATProtocolTests.cpp")
-target_include_directories("ATProtocol-tests" PRIVATE "${CMAKE_SOURCE_DIR}/../../jensen-loouq/windows-desktop-serial/include")
-target_link_libraries("ATProtocol-tests" "${CMAKE_SOURCE_DIR}/../../jensen-loouq/windows-desktop-serial/lib/Win32/Debug/win32_devices_serialdevice.lib")
+target_include_directories("ATProtocol-tests" PRIVATE "${CMAKE_SOURCE_DIR}/../../jensen-loouq/Windows-Device-Serial-Cpp/include")
+target_link_libraries("ATProtocol-tests" "${CMAKE_SOURCE_DIR}/../../jensen-loouq/Windows-Device-Serial-Cpp/out/build/x86-Debug/libwinserial.lib")
 
 add_unit_test("CompositePtr-tests" "src/CompositePtrTests.cpp")
