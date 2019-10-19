@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.8)
 
 set(PROJECT_NAME "CoreZero-SDK")
-set(PROJECT_LIB_NAME "CoreZero")
+set(PROJECT_LIB_NAME "libcorezero")
 
 
 
