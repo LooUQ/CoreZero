@@ -5,7 +5,7 @@
 #include <corezero/utility/atprotocol.hpp>
 
 #include <Win32.Devices.SerialDevice.hpp>
-constexpr const uint16_t PortNumber = 22;
+constexpr const uint16_t PortNumber = 4;
 
 #include <string>
 #include <thread>
@@ -159,35 +159,35 @@ namespace corezero
 				m_serialDevice.Defer(1000ms);
 			}
 
-			TEST_F(ATProtocolTest, AsyncTest)
-			{
-				m_serialDevice.UsingEvents(true);
-				m_serialDevice.ReceivedData += Create_MemberDelegate(
-					(ATProtocolTest * const)this, &ATProtocolTest::handle_rx
-				);
+			//TEST_F(ATProtocolTest, AsyncTest)
+			//{
+			//	m_serialDevice.UsingEvents(true);
+			//	m_serialDevice.ReceivedData += Create_MemberDelegate(
+			//		(ATProtocolTest * const)this, &ATProtocolTest::handle_rx
+			//	);
 
-				m_protocol = ATProtocol<false>(Create_MemberDelegate(
-					(ATProtocolTest * const)this, &ATProtocolTest::write
-				));
+			//	m_protocol = ATProtocol<false>(Create_MemberDelegate(
+			//		(ATProtocolTest * const)this, &ATProtocolTest::write
+			//	));
 
-				//	Open a socket asynchronously
-				typedef struct Socket
-				{
-					unsigned connect_id;
-				} Socket;
+			//	//	Open a socket asynchronously
+			//	typedef struct Socket
+			//	{
+			//		unsigned connect_id;
+			//	} Socket;
 
-				ATCommand<unsigned, unsigned> OpenSocketRequest("+QIOPEN", 1, 0, "UDP", "127.0.0.1", 8080, 0, 1);
-				if (!m_protocol.SendCommand(OpenSocketRequest) == ATResponseCode<false>::atOk)
-				{
-					//	[error]: command was ill-formed.
-				}
-				OpenSocketRequest.GetAsync(
-					[](unsigned connectID, unsigned err)
-					{
-						Socket* _sock = new Socket{ connectID };
-					}
-				);
-			}
+			//	ATCommand<unsigned, unsigned> OpenSocketRequest("+QIOPEN", 1, 0, "UDP", "127.0.0.1", 8080, 0, 1);
+			//	if (!m_protocol.SendCommand(OpenSocketRequest) == ATResponseCode<false>::atOk)
+			//	{
+			//		//	[error]: command was ill-formed.
+			//	}
+			//	OpenSocketRequest.GetAsync(
+			//		[](unsigned connectID, unsigned err)
+			//		{
+			//			Socket* _sock = new Socket{ connectID };
+			//		}
+			//	);
+			//}
 		}
 	}
 }
