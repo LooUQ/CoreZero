@@ -115,7 +115,7 @@ namespace corezero
 	{
 		m_pCString = new char[length + 1];
 		strncpy(m_pCString, cstring, length);
-		m_pCString[length] = NULL;
+		m_pCString[length] = '\0';
 	}
 
 	int String::reserve(unsigned capacity)
